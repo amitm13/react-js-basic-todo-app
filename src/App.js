@@ -1,23 +1,45 @@
-import logo from './logo.svg';
+import { useEffect, useState } from 'react';
 import './App.css';
+import HeaderTitle from './Components/HeaderTitle';
+import TodoForm from './Components/TodoForm';
+import TodoItem from './Components/TodoItem';
 
 function App() {
+
+  const [todoList, setTodoList] = useState([
+    
+  ]);
+
+  const addTodo = (todoTitle) => {
+    if(todoTitle==""){
+      alert('Please enter todo title!');
+      return false;
+    }
+    setTodoList([ ...todoList, { "title":todoTitle, "status":0 }]);
+  }
+
+  const removeTodo = (todoTitle) => {
+    let newTodo = todoList.filter(todo => todo.title!=todoTitle);
+    setTodoList(newTodo);
+  }
+
+  const updateStatus = (event, todoTitle) => {
+    console.log('event', event)
+    let tempArray = [];
+    todoList.forEach(element => {
+      if(todoTitle == element.title){
+        tempArray.push({title:todoTitle, status: (event.target.checked) ? 1 : 0});
+      }else{
+        tempArray.push(element);
+      }
+    });
+    setTodoList(tempArray);
+  }
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="container bg-gray-100 mx-auto px-4">
+      <HeaderTitle />
+      <TodoForm addTodo={addTodo} />
+      {todoList.map((todo, key) => <TodoItem removeTodo={removeTodo} updateStatus={updateStatus} key={key} todo={todo}/>)}
     </div>
   );
 }
